@@ -1,6 +1,7 @@
-# pokevue
+# PokeVue
+**Vue.js Pokemon Simulator**
 
-This template should help get you started developing with Vue 3 in Vite.
+![acastillo_a_widescreen_banner_for_a_pokemon_simulator_called_Po_36e727d3-aec8-4dc2-a999-e01a1b2c4407(2)](https://github.com/acastillo9/pokevue/assets/12093565/1760030a-d9ee-4106-bf12-5b6c9772a767)
 
 ## Recommended IDE Setup
 
