@@ -1,22 +1,72 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
+import type { PropType } from 'vue'
+import type { Pokemon } from '@/models/pokemon.model'
 
-const props = defineProps(['pokemon'])
+const lifeDemage = ref(0);
+
+const props = defineProps({
+  pokemon: {
+    type: Object as PropType<Pokemon>,
+    default: () => ({})
+  },
+  demage: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const pokemonLife = computed(() => {
   let currentLife = 0
   if (props.pokemon?.hp) [(currentLife = (props.pokemon.hp.current! * 100) / props.pokemon.hp.max)]
   return currentLife > 0 ? Math.round(currentLife) : 0
 })
+
+const hpColour = computed(() => {
+  let classColour = 'empty'
+  if (pokemonLife.value > 0 && pokemonLife.value < 20) {
+    classColour = 'red'
+  } else if (pokemonLife.value >= 20 && pokemonLife.value < 50) {
+    classColour = 'yellow'
+  } else if (pokemonLife.value >= 50) {
+    classColour = 'green'
+  }
+  return classColour
+})
+
+const genderSymbol = computed(() => {
+  let symbol = ''
+  if (props.pokemon.gender === 'male') {
+    symbol = '&#9794;' // TODO define icons font library 
+  } else if (props.pokemon.gender === 'female') {
+    symbol = '&#9792;'
+  }
+  return symbol
+})
+
+
+watch(pokemonLife, (newValue, oldValue) => {
+  if (oldValue) lifeDemage.value = oldValue - newValue
+})
+
+watch(
+  () => props.demage,
+  (newValue) => {
+    if (!newValue) lifeDemage.value = 0
+  })
+
 </script>
 
 <template>
   <div class="statbar">
-    <strong>{{ pokemon?.name }} <small>L{{ pokemon?.level }}</small></strong>
+    <strong>{{ pokemon?.name }} <small>L{{ pokemon?.level }}</small> <span v-html="genderSymbol"></span></strong>
     <div class="hpbar">
       <div class="hptext">{{ pokemonLife }}%</div>
-      <div :class="['hp', { empty: pokemonLife <= 0 }]" :style="{ width: pokemonLife + '%' }"></div>
+      <div :class="['hp', hpColour]" :style="{ width: pokemonLife + '%' }"></div>
     </div>
+    <Transition name="demage">
+      <div v-if="props.demage && lifeDemage" class="demage">-{{ lifeDemage }} %</div>
+    </Transition>
   </div>
 </template>
 
@@ -56,6 +106,7 @@ const pokemonLife = computed(() => {
   padding: 2px 4px;
   left: -30px;
   top: -60px;
+  z-index: 1;
 }
 
 .statbar strong {
@@ -99,14 +150,58 @@ const pokemonLife = computed(() => {
 
 .statbar .hpbar .hp {
   height: 8px;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.statbar .hpbar .hp.green {
   border-top: 2px solid #00dd60;
   background: #00bb51;
   border-bottom: 2px solid #007734;
   border-right: 1px solid #007734;
-  border-radius: 3px;
+}
+
+.statbar .hpbar .hp.yellow {
+  border-top: 2px solid darkkhaki;
+  background: yellow;
+  border-bottom: 2px solid darkgoldenrod;
+  border-right: 1px solid darkgoldenrod;
+}
+
+.statbar .hpbar .hp.red {
+  border-top: 2px solid indianred;
+  background: red;
+  border-bottom: 2px solid darkred;
+  border-right: 1px solid darkred;
 }
 
 .statbar .hpbar .hp.empty {
   border-right: none;
+}
+
+.statbar .demage {
+  background: orangered;
+  border-radius: 4px;
+  color: #eee;
+  font-size: 10px;
+  font-weight: bold;
+  margin: 50px auto;
+  text-align: center;
+  width: 45px;
+}
+
+.demage-enter-active {
+  transition-delay: 0s;
+  transition: opacity 0.5s ease;
+}
+
+.demage-leave-active {
+  transition: all 1s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.demage-enter-from,
+.demage-leave-to {
+  transform: translateY(-30px);
+  opacity: 0;
 }
 </style>
