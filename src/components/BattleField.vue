@@ -10,11 +10,11 @@ const { pokemonTeam, teamDamage } = useCurrentTeamPokemon()
 <template>
   <div class="field">
     <div class="rivalPokemon">
-      <LifeBar :pokemon="pokemonRival" />
+      <LifeBar :pokemon="pokemonRival" :damage="rivalDamage" />
       <img :class="{ damaged: rivalDamage }" :src="getImageUrl(pokemonRival?.id || '')" alt="" />
     </div>
     <div :class="{ teamPokemon: pokemonTeam?.id !== '6', teamBigPokemon: pokemonTeam?.id === '6' }">
-      <LifeBar :pokemon="pokemonTeam" />
+      <LifeBar :pokemon="pokemonTeam" :damage="teamDamage" />
       <img :class="[{ shake: teamDamage }, 'active-pokemon']" :src="getImageUrl(pokemonTeam?.id || '', false)" alt="" />
     </div>
   </div>

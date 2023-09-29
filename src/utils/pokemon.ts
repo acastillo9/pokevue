@@ -1,6 +1,6 @@
 import { frontImagePokemon, backImagePokemon } from './constants'
 import { type Move, type Type, type Stat, type Pokemon } from '@/models/pokemon.model'
-import { getMoveInformation, getPokemonInfo, getTypesInformation } from '@/services/api'
+import { getMoveInformation, getPokemonInfo, getPokemonSpecies, getTypesInformation } from '@/services/api'
 
 export const getImageUrl = (pokemon: string = '', isOnFrontPosition = true) => {
   const positionUri = isOnFrontPosition ? frontImagePokemon : backImagePokemon
@@ -44,6 +44,9 @@ export const getPokemon = async (name: string): Promise<Pokemon> => {
   const hp: Stat = getStat(0, calculateHp)
   hp.current = hp.max
 
+  const { gender_rate } = await getPokemonSpecies(name)
+  const gender = calculateGenderChance(gender_rate);
+
   return {
     id: data.id,
     name: data.name,
@@ -58,7 +61,8 @@ export const getPokemon = async (name: string): Promise<Pokemon> => {
     spDef: getStat(4),
     speed: getStat(5),
     moves,
-    types: pokemonTypes
+    types: pokemonTypes,
+    gender
   }
 }
 
@@ -151,4 +155,18 @@ const calculateCritical = (criticalHitRatio: number): boolean => {
 
   // If the random number is less than the critical hit ratio, it's a critical hit
   return randomNumber < criticalHitRatio
+}
+
+// Calculate pokemon gender
+
+const calculateGenderChance = (gender_rate: number) => {
+  if (gender_rate === -1) return 'genderless'
+  const female_rate = (gender_rate * 100) / 8
+  const genders = [{ name: 'male', weight: 100 - female_rate }, { name: 'female', weight: female_rate }]
+  const weights = genders.reduce((res: any, gender, i) => {
+    res.push(gender.weight + (res[i - 1] ?? 0));
+    return res;
+  }, []);
+  const random = Math.random() * weights[weights.length - 1];
+  return genders[weights.findIndex((weight: number) => weight > random)].name;
 }

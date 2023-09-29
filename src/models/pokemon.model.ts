@@ -13,6 +13,7 @@ export interface Pokemon {
   speed: Stat
   moves: Move[]
   types: Type[]
+  gender: string
 }
 
 export interface Ability {
