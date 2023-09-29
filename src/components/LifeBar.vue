@@ -3,14 +3,14 @@ import { computed, ref, watch } from 'vue'
 import type { PropType } from 'vue'
 import type { Pokemon } from '@/models/pokemon.model'
 
-const lifeDemage = ref(0);
+const lifeDamage = ref(0);
 
 const props = defineProps({
   pokemon: {
     type: Object as PropType<Pokemon>,
     default: () => ({})
   },
-  demage: {
+  damage: {
     type: Boolean,
     default: false
   }
@@ -46,13 +46,13 @@ const genderSymbol = computed(() => {
 
 
 watch(pokemonLife, (newValue, oldValue) => {
-  if (oldValue) lifeDemage.value = oldValue - newValue
+  if (oldValue) lifeDamage.value = oldValue - newValue
 })
 
 watch(
-  () => props.demage,
+  () => props.damage,
   (newValue) => {
-    if (!newValue) lifeDemage.value = 0
+    if (!newValue) lifeDamage.value = 0
   })
 
 </script>
@@ -64,8 +64,8 @@ watch(
       <div class="hptext">{{ pokemonLife }}%</div>
       <div :class="['hp', hpColour]" :style="{ width: pokemonLife + '%' }"></div>
     </div>
-    <Transition name="demage">
-      <div v-if="props.demage && lifeDemage" class="demage">-{{ lifeDemage }} %</div>
+    <Transition name="damage">
+      <div v-if="props.damage && lifeDamage" class="damage">-{{ lifeDamage }} %</div>
     </Transition>
   </div>
 </template>
@@ -179,7 +179,7 @@ watch(
   border-right: none;
 }
 
-.statbar .demage {
+.statbar .damage {
   background: orangered;
   border-radius: 4px;
   color: #eee;
@@ -190,17 +190,17 @@ watch(
   width: 45px;
 }
 
-.demage-enter-active {
+.damage-enter-active {
   transition-delay: 0s;
   transition: opacity 0.5s ease;
 }
 
-.demage-leave-active {
+.damage-leave-active {
   transition: all 1s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
-.demage-enter-from,
-.demage-leave-to {
+.damage-enter-from,
+.damage-leave-to {
   transform: translateY(-30px);
   opacity: 0;
 }
