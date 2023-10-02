@@ -32,7 +32,7 @@ onMounted(() => {
 <template>
   <div class="pokemon-list">
     <div v-for="pokemon in pokemons" :key="pokemon.id"
-      :class="{ team: pokemonTeam?.id === pokemon?.id, rival: pokemonRival?.id === pokemon?.id }" class="pokemon-item">
+      :class="{ team: pokemonTeam?.id === pokemon?.id, rival: pokemonRival?.id === pokemon?.id }" class="pokemon-item" :aria-label="pokemon.name">
       <img :src="getImageUrl(pokemon.id)" @click="updateTeamPokemon(pokemon)" alt="" />
     </div>
   </div>

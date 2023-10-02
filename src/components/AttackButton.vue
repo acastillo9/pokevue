@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { getPokemonTypeUrl } from '@/utils/pokemon'
+import { getPokemonTypeUrl } from '../utils/pokemon'
 
-defineProps(['move'])
-defineEmits(['attack'])
+defineProps(['move']);
+defineEmits(['attack']);
+function moveInformation(move) {
+  return move.name + ' Type: ' + move.type + ' Power: ' + move.power;
+}
 </script>
 
 <template>
-  <button class="button-attack" @click="$emit('attack')">
+  <button class="button-attack" @click="$emit('attack')" :aria-label="moveInformation(move)">
     <div class="move-title">
       <p>{{ move.name }}</p>
       <img class="type-image" :src="getPokemonTypeUrl(move.type)" alt="move type" />
